@@ -1,0 +1,21 @@
+services:
+  gollum:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gollum
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./wiki:/wiki
+      - ./config.ru:/app/config.ru:ro
+      - ./gollum_auth_patch.rb:/app/gollum_auth_patch.rb:ro
+      - ./users.yml:/app/users.yml:ro
+    working_dir: /app
+    environment:
+      - RACK_ENV=production
+      - SESSION_SECRET=0950c04385829d0b039679e2fbafc88417f9ccd41d45391f5b1e17c52bde9f32
+    restart: unless-stopped
+
+volumes:
+  wiki:

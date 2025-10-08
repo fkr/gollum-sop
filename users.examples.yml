@@ -1,0 +1,18 @@
+
+---
+- username: admin
+  password: changeme123
+  name: Admin User
+  email: admin@example.com
+
+- username: user1
+  password: secret456
+  name: John Doe
+  email: john@example.com
+
+- username: user2
+  # You can also use password_digest (SHA-256 hash) instead of plain password
+  # Generate with: echo -n "yourpassword" | sha256sum
+  password_digest: 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8  # This is "password"
+  name: Jane Smith
+  email: jane@example.com
