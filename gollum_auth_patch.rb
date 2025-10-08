@@ -13,6 +13,21 @@ module Gollum
 
     def call(env)
       request = Rack::Request.new(env)
+      session = env['rack.session'] ||= {}
+      
+      # Check if user is already in session
+      if session['authenticated_user']
+        # Restore user info from session
+        env['REMOTE_USER'] = session['authenticated_user']
+        env['gollum.author'] = session['gollum.author']
+        
+        # Allow unauthenticated readonly access if enabled
+        if @options[:allow_unauthenticated_readonly] && readonly_request?(request)
+          return @app.call(env)
+        end
+        
+        return @app.call(env)
+      end
       
       # Allow unauthenticated readonly access if enabled
       if @options[:allow_unauthenticated_readonly] && readonly_request?(request)
@@ -22,19 +37,21 @@ module Gollum
       # Require authentication
       auth = super(env)
       
-      # If authenticated, set the author info in session
+      # If authenticated, save user info in session
       if env['REMOTE_USER']
         user = find_user(env['REMOTE_USER'])
         if user
-          # Set in session for Gollum to pick up
-          session = env['rack.session'] ||= {}
-          session['gollum.author'] = {
+          author_info = {
             name: user['name'] || user[:name],
             email: user['email'] || user[:email]
           }
           
-          # Also set in env for compatibility
-          env['gollum.author'] = session['gollum.author']
+          # Store in session to persist across requests
+          session['authenticated_user'] = env['REMOTE_USER']
+          session['gollum.author'] = author_info
+          
+          # Also set in env for current request
+          env['gollum.author'] = author_info
         end
       end
       

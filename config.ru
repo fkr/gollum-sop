@@ -21,6 +21,8 @@ use Rack::Session::Cookie,
     key: 'rack.session',
     secret: ENV['SESSION_SECRET'] || 'a' * 64, # Minimum 64 bytes required
     same_site: :lax,
+    httponly: true,
+    path: '/',
     max_age: 86400 # 24 hours
 
 # Apply authentication middleware
