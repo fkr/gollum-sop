@@ -29,6 +29,12 @@ use Rack::Session::Cookie,
 # This must be loaded BEFORE Precious::App
 use Gollum::Auth, users, auth_options
 
+# TemplateFilter to return the current date
+# DIN 5008
+Gollum::TemplateFilter.add_filter('{{current_date}}', & -> () { Time.now.strftime("%d.%m.%Y") })
+# ISO-8601
+# Gollum::TemplateFilter.add_filter('{{current_date}}', & -> () { Time.now.strftime("%Y-%m-%d") })
+
 # Configure Gollum
 gollum_path = '/wiki'
 wiki_options = {
@@ -36,7 +42,8 @@ wiki_options = {
   per_page_uploads: true,
   live_preview: false,
   h1_title: true,
-  universal_toc: false
+  universal_toc: false,
+  template_page: true,
 }
 
 Precious::App.set(:gollum_path, gollum_path)
