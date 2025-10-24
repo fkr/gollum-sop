@@ -15,6 +15,8 @@ can be used to generate such a string: `openssl rand -hex 32`.
 Assuming your user is in the docker group:
 
 ```
+$ mv users.examples.yml users.yml
+(edit users.yml to your needs)
 $ sed -i "s|SESSION_SECRET=.*|SESSION_SECRET=$(openssl rand -hex 32)|" docker-compose.yml
 $ docker-compose up -d
 ```
